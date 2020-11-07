@@ -9,9 +9,9 @@ from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from portfolio_backend.application.settings import BackendSettings
-
 sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__), "../", "../")))
+
+from portfolio_backend.application.settings import BackendSettings
 
 backend_application = Flask(
     import_name=__name__,
