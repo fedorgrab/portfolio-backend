@@ -1,61 +1,40 @@
-import json
+from flask import send_from_directory
 
-# import graphene
-from flask import Response, send_from_directory
-# from flask_graphql import GraphQLView
-# from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
-#
-# from backend import models
+from portfolio_backend import models, schemas
 from portfolio_backend.application import backend_application
+from portfolio_backend.application.settings import BackendSettings
 
 
-# from backend.application.settings import BackendSettings
-# from backend.data_mining import DETAILED_COUNTRIES
-#
-#
-# class VirusDailyStatRecordObject(SQLAlchemyObjectType):
-#     class Meta:
-#         model = models.VirusDailyStatRecord
-#         interfaces = (graphene.relay.Node,)
-#
-#
-# class VirusDayOneRecord(SQLAlchemyObjectType):
-#     class Meta:
-#         model = models.VirusDayOneByCountry
-#         interfaces = (graphene.relay.Node,)
-#         filter_fields = {"country": ["exact"]}
-#
-#
-# class Query(graphene.ObjectType):
-#     node = graphene.relay.Node.Field()
-#
-#     daily_update_records = SQLAlchemyConnectionField(type=VirusDailyStatRecordObject)
-#     day_one_records = SQLAlchemyConnectionField(
-#         type=VirusDayOneRecord, country=graphene.String()
-#     )
-#     detailed_countries = graphene.List(of_type=graphene.String)
-#
-#     def resolve_day_one_records(self, info, country):
-#         country = "".join([country[0].capitalize(), country[1:]])
-#         return models.VirusDayOneByCountry.query.filter_by(country=country)
-#
-#     def resolve_detailed_countries(self, info):
-#         return [country_name.casefold() for country_name in DETAILED_COUNTRIES]
-#
-#
-# schema = graphene.Schema(query=Query)
-#
-# backend_application.add_url_rule(
-#     "/graphql-api",
-#     view_func=GraphQLView.as_view("graphql", schema=schema, graphiql=True),
-# )
-#
-#
-# @backend_application.route("/detailed-countries", methods=["GET"])
-# def detailed_countries():
-#     return Response(json.dumps([country.casefold() for country in DETAILED_COUNTRIES]))
+@backend_application.route("/portfolio-info", methods=["GET"])
+def portfolio_info():
+    website_info_schema = schemas.WebSiteInfoSchema()
+    social_link_schema = schemas.SocialLinkSchema()
+    portfolio_object_schema = schemas.PortfolioObjectSchema()
+    education_section_item_schema = schemas.EducationSectionItemSchema()
+    job_section_item_schema = schemas.JobSectionItemSchema()
+
+    website_info = website_info_schema.dump(obj=models.WebSiteInfo.query.first())
+    portfolio_objects = portfolio_object_schema.dump(
+        obj=models.PortfolioProject.query.all(), many=True
+    )
+    education_items = education_section_item_schema.dump(
+        obj=models.EducationSectionItem.query.all(), many=True
+    )
+    job_items = job_section_item_schema.dump(
+        obj=models.JobSectionItem.query.all(), many=True
+    )
+    social_links = social_link_schema.dump(obj=models.SocialLink.query.all(), many=True)
+    website_info.update(
+        portfolio=portfolio_objects,
+        education=education_items,
+        work=job_items,
+        social_links=social_links,
+    )
+    return website_info
 
 
-@backend_application.route("/", methods=["GET"])
-def dev_frontend_test():
-    return Response(json.dumps({"data": "good"}))
+if backend_application.debug:
+
+    @backend_application.route("/data/<path:filename>", methods=["GET"])
+    def data(filename):
+        return send_from_directory(BackendSettings.DATA_DIR, filename)

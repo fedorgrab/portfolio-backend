@@ -4,7 +4,7 @@ BASE_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../", "../"
 ROOT_DIR = os.path.realpath(os.path.join(BASE_DIR, "../"))
 CONFIG_DIR = os.path.realpath(os.path.join(ROOT_DIR, "conf/"))
 CONFIG_NAMES = ("secrets",)
-BACKEND_CONFIGS = {}
+SECRETS = {}
 
 for config_filename in CONFIG_NAMES:
     config_file_path = os.path.realpath(os.path.join(CONFIG_DIR, config_filename))
@@ -14,4 +14,4 @@ for config_filename in CONFIG_NAMES:
             key, value = line.split("=")
             key = key.replace(" ", "")
             value = value.replace(" ", "")
-            BACKEND_CONFIGS[key] = value
+            SECRETS[key] = value

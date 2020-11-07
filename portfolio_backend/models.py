@@ -1,60 +1,83 @@
-import datetime
-
 from portfolio_backend.application import db
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 
 
-# from sqlalchemy_imageattach.entity import Image, image_attachment
+class WebSiteInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(length=127), nullable=False)
+    avatar_image_path = db.Column(db.String(length=1024), nullable=True)
+    role = db.Column(db.String(length=511), nullable=False)
+    role_description = db.Column(db.String(length=2047), nullable=False)
+    about_me = db.Column(db.Text, nullable=False)
+    address = db.Column(db.String(length=127), nullable=False)
+    website = db.Column(db.String(length=255), nullable=False)
+
+    __table_name__ = "major_info"
+
+
+class PortfolioLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(length=127), nullable=False)
+    url = db.Column(db.String(length=511), nullable=False)
+
+    portfolio_project_id = db.Column(db.Integer, db.ForeignKey("portfolio_project.id"))
+    portfolio_project = db.relationship("PortfolioProject", back_populates="links")
+
+    __table_name__ = "portfolio_project__link"
 
 
 class PortfolioProject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(127), nullable=False)
-    description = db.Column(db.String(2047), nullable=False)
-    image_path = db.Column(db.String(1024), nullable=False)
-    # image = image_attachment("ProjectPicture")
+    # Header info:
+    name = db.Column(db.String(length=127), nullable=False)
+    short_description = db.Column(db.Text, default="description")
+    description = db.Column(db.Text, nullable=False)
+    # Files:
+    image_path = db.Column(db.String(length=1024), nullable=False)
+    notebook_path = db.Column(db.String(length=1024), nullable=True)
+    # Links:
+    links = db.relationship("PortfolioLink", back_populates="portfolio_project")
 
     __table_name__ = "portfolio_project"
-
-    # __table_args__ = (
-    #     db.UniqueConstraint(
-    #         "country", "province", "created_at", name="country_province_uc"
-    #     ),
-    # )
+    __table_args__ = (
+        db.UniqueConstraint("id", "image_path", name="project_image_uc"),
+        db.UniqueConstraint("id", "name", name="project_name_uc"),
+    )
 
     def __repr__(self):
         return self.name
 
-# class ProjectPicture(db.Model, Image):
-#     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-#     user = db.relationship("User")
-#     __tablename__ = "project_picture"
 
-# class VirusDailyStatRecord(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     cases_confirmed = db.Column(db.Integer, nullable=True)
-#     cases_deaths = db.Column(db.Integer, nullable=True)
-#     cases_recovered = db.Column(db.Integer, nullable=True)
-#     cases_confirmed_new = db.Column(db.Integer, nullable=True)
-#     cases_deaths_new = db.Column(db.Integer, nullable=True)
-#     cases_recovered_new = db.Column(db.Integer, nullable=True)
-#     created_at = db.Column(
-#         db.DateTime, default=datetime.datetime.utcnow, nullable=False
-#     )
-#
-#     __table_name__ = "virus_daily_stat_record"
-#
-#
-# class VirusDayOneByCountry(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     country = db.Column(db.String(120), nullable=False)
-#     cases_confirmed = db.Column(db.Integer, nullable=True)
-#     cases_deaths = db.Column(db.Integer, nullable=True)
-#     cases_recovered = db.Column(db.Integer, nullable=True)
-#     date = db.Column(db.Date, nullable=False)
-#
-#     __table_name__ = "virus_day_one_by_country"
-#     __table_args__ = (
-#         db.UniqueConstraint("country", "date", name="country_date_unique_constraint"),
-#     )
+class SocialLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(length=127), nullable=False)
+    url = db.Column(db.String(length=511), nullable=False)
+    class_name = db.Column(db.String(length=127), nullable=False)
+
+    __table_name__ = "social_link"
+    __table_args__ = (db.UniqueConstraint("id", "name", name="id_name_uc"),)
+
+
+class EducationSectionItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    school_name = db.Column(db.String(length=127), nullable=False)
+    major = db.Column(db.String(length=127), nullable=False)
+    graduation_month_year = db.Column(db.String(length=127), nullable=False)
+    description = db.Column(db.String(length=1024), nullable=False)
+
+    __table_name__ = "education_info"
+    __table_args__ = (
+        db.UniqueConstraint("id", "school_name", name="id_school_name_uc"),
+    )
+
+
+class JobSectionItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(length=127), nullable=False)
+    position = db.Column(db.String(length=127), nullable=False)
+    period_of_working = db.Column(db.String(length=511), nullable=False)
+    description = db.Column(db.String(length=1024), nullable=False)
+
+    __table_name__ = "job_info"
+    __table_args__ = (
+        db.UniqueConstraint("id", "company_name", name="id_company_name_uc"),
+    )
