@@ -18,7 +18,7 @@ RUN mkdir /home/portfolio/data
 RUN touch /home/portfolio/conf/secrets
 
 ENV FLASK_APP /home/portfolio/portfolio-backend/portfolio_backend/application/wsgi.py
-ENV FLASK_ENV production
+ENV FLASK_ENV development
 RUN echo "SECRET_KEY=asdfghjkjhgfdsasdfghjkjhgfdsasdfghjhgfdsasdfghjkjhgfds" >> /home/portfolio/conf/secrets
 
 COPY deploy/uwsgi.ini /home/portfolio/conf/uwsgi.ini
