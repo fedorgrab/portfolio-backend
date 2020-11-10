@@ -6,6 +6,9 @@ services:
     build: ./
     container_name: portfolio_backend
     restart: always
+    volumes:
+      - ../database.db:/home/portfolio/database.db
+      - ../data:/home/portfolio/data
     ports:
       - 5000:5000
 
@@ -13,8 +16,10 @@ services:
     image: nginx:latest
     container_name: nginx_server
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
       - ../React-Portfolio/build:/var/www/frontend
+      - ../http-basic-creds.txt:/etc/nginx/.htpasswd
+      - ../data:/var/www/data
     depends_on:
       - backend
     ports:

@@ -3,7 +3,7 @@ import os
 BASE_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../", "../"))
 ROOT_DIR = os.path.realpath(os.path.join(BASE_DIR, "../"))
 CONFIG_DIR = os.path.realpath(os.path.join(ROOT_DIR, "conf/"))
-CONFIG_NAMES = ("secrets",)
+CONFIG_NAMES = ("secrets.txt",)
 SECRETS = {}
 
 for config_filename in CONFIG_NAMES:
