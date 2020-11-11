@@ -25,17 +25,23 @@ class CKTextAreaField(TextAreaField):
 
 
 def display_image_list(_, __, model, *args, **kwargs):
-
     if not model.image_path:
         return ""
 
     return Markup(
-        f'<img src="{BackendSettings.DATA_URL}{model.image_path}" '
-        f'style="width:100px; height:100px">'
+        f'<a href="/admin/portfolioproject/edit/?id={model.id}">'
+        f'  <img src="{BackendSettings.DATA_URL}{model.image_path}" '
+        f'   style="width:170px; height:170px">'
+        f'</a>'
     )
 
 
-class ProjectAdminView(ModelView):
+class OrderableModelView(ModelView):
+    column_editable_list = ("position",)
+    column_default_sort = "position"
+
+
+class ProjectAdminView(OrderableModelView):
     form_extra_fields = {
         "image_path": ImageUploadField(
             label="Image",
@@ -54,7 +60,11 @@ class ProjectAdminView(ModelView):
     form_overrides = {"description": CKTextAreaField}
     column_labels = {"image_path": "Image", "notebook_path": "Notebook"}
     extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
-    column_formatters = {"image_path": display_image_list}
+    column_formatters = {
+        "image_path": display_image_list,
+    }
+
+    column_list = ("image_path", "position", "name", "short_description",)
     inline_models = (models.PortfolioLink,)
 
     @staticmethod
@@ -62,19 +72,21 @@ class ProjectAdminView(ModelView):
         return f"{form_field.relative_path}/{file.filename}"
 
     def on_model_change(self, form, model, is_created):
-        image_file = form.image_path.data
-        notebook_file = form.notebook_path.data
+        if hasattr(form, "image_path") or hasattr(form, "notebook_path"):
+            image_file = form.image_path.data
+            notebook_file = form.notebook_path.data
 
-        try:
-            model.image_path = self.change_file_path_url(form.image_path, image_file)
-        except AttributeError:
-            print("Updating without new image")
-        try:
-            model.notebook_path = self.change_file_path_url(
-                form.notebook_path, notebook_file
-            )
-        except AttributeError:
-            print("Updating without new notebook")
+            try:
+                model.image_path = self.change_file_path_url(form.image_path, image_file)
+            except AttributeError:
+                print("Updating without new image")
+            try:
+                model.notebook_path = self.change_file_path_url(
+                    form.notebook_path, notebook_file
+                )
+            except AttributeError:
+                print("Updating without new notebook")
+        super().on_model_change(form, model, is_created)
 
 
 class WebSiteInfoModelView(ModelView):
@@ -100,11 +112,16 @@ class WebSiteInfoModelView(ModelView):
             return redirect("/admin/websiteinfo/new/?url=%2Fadmin%2Fwebsiteinfo%2F")
 
 
+class JobSectionModelView(OrderableModelView):
+    column_editable_list = ("order_number",)
+    column_default_sort = "order_number"
+
+
 admin.add_view(WebSiteInfoModelView(models.WebSiteInfo, db.session))
-admin.add_view(ModelView(models.SocialLink, db.session))
+admin.add_view(OrderableModelView(models.SocialLink, db.session))
 admin.add_view(ProjectAdminView(models.PortfolioProject, db.session))
-admin.add_view(ModelView(models.EducationSectionItem, db.session))
-admin.add_view(ModelView(models.JobSectionItem, db.session))
+admin.add_view(OrderableModelView(models.EducationSectionItem, db.session))
+admin.add_view(JobSectionModelView(models.JobSectionItem, db.session))
 admin.add_view(
     FileAdmin(BackendSettings.DATA_DIR, BackendSettings.DATA_URL, name="Media Files")
 )

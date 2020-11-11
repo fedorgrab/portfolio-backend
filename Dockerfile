@@ -12,9 +12,7 @@ RUN python/bin/pip install -r portfolio-backend/portfolio_backend/requirements.t
 
 COPY portfolio_backend portfolio-backend/portfolio_backend
 COPY templates portfolio-backend/templates
-COPY deploy/boot.sh ./
 
-RUN chmod +x boot.sh
 RUN mkdir /home/portfolio/conf
 RUN mkdir /home/portfolio/data
 RUN touch /home/portfolio/conf/secrets.txt

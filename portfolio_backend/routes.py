@@ -15,13 +15,27 @@ def portfolio_info():
 
     website_info = website_info_schema.dump(obj=models.WebSiteInfo.query.first())
     portfolio_objects = portfolio_object_schema.dump(
-        obj=models.PortfolioProject.query.all(), many=True
+        obj=(
+            models.PortfolioProject
+            .query.order_by(models.PortfolioProject.position)
+            .all()
+        ),
+        many=True
     )
+
     education_items = education_section_item_schema.dump(
-        obj=models.EducationSectionItem.query.all(), many=True
+        obj=(
+            models.EducationSectionItem
+            .query.order_by(models.EducationSectionItem.position)
+            .all()
+        ), many=True
     )
     job_items = job_section_item_schema.dump(
-        obj=models.JobSectionItem.query.all(), many=True
+        obj=(
+            models.JobSectionItem
+            .query.order_by(models.JobSectionItem.order_number)
+            .all()
+        ), many=True
     )
     social_links = social_link_schema.dump(obj=models.SocialLink.query.all(), many=True)
     website_info.update(
@@ -38,3 +52,7 @@ if backend_application.debug:
     @backend_application.route("/data/<path:filename>", methods=["GET"])
     def data(filename):
         return send_from_directory(BackendSettings.DATA_DIR, filename)
+else:
+    @backend_application.route("/data/<path:filename>", methods=["GET"])
+    def data(filename):
+        pass

@@ -1,6 +1,10 @@
 from portfolio_backend.application import db
 
 
+class OrderableMixin:
+    position = db.Column(db.Integer)
+
+
 class WebSiteInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(length=127), nullable=False)
@@ -25,7 +29,7 @@ class PortfolioLink(db.Model):
     __table_name__ = "portfolio_project__link"
 
 
-class PortfolioProject(db.Model):
+class PortfolioProject(OrderableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # Header info:
     name = db.Column(db.String(length=127), nullable=False)
@@ -47,7 +51,7 @@ class PortfolioProject(db.Model):
         return self.name
 
 
-class SocialLink(db.Model):
+class SocialLink(OrderableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(length=127), nullable=False)
     url = db.Column(db.String(length=511), nullable=False)
@@ -57,7 +61,7 @@ class SocialLink(db.Model):
     __table_args__ = (db.UniqueConstraint("id", "name", name="id_name_uc"),)
 
 
-class EducationSectionItem(db.Model):
+class EducationSectionItem(OrderableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     school_name = db.Column(db.String(length=127), nullable=False)
     major = db.Column(db.String(length=127), nullable=False)
@@ -70,10 +74,11 @@ class EducationSectionItem(db.Model):
     )
 
 
-class JobSectionItem(db.Model):
+class JobSectionItem(OrderableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company_name = db.Column(db.String(length=127), nullable=False)
     position = db.Column(db.String(length=127), nullable=False)
+    order_number = db.Column(db.Integer)
     period_of_working = db.Column(db.String(length=511), nullable=False)
     description = db.Column(db.String(length=1024), nullable=False)
 
