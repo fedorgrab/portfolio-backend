@@ -20,6 +20,7 @@ services:
       - ../React-Portfolio/build:/var/www/frontend
       - ../http-basic-creds.txt:/etc/nginx/.htpasswd
       - ../data:/var/www/data
+      - ../ssl:/etc/nginx/ssl
     depends_on:
       - backend
     ports:
