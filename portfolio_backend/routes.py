@@ -1,4 +1,4 @@
-from flask import send_from_directory
+from flask import send_from_directory, Response
 
 from portfolio_backend import models, schemas
 from portfolio_backend.application import backend_application
@@ -55,4 +55,4 @@ if backend_application.debug:
 else:
     @backend_application.route("/data/<path:filename>", methods=["GET"])
     def data(filename):
-        pass
+        return Response("")

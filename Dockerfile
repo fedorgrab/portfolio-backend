@@ -22,6 +22,7 @@ ENV FLASK_APP /home/portfolio/portfolio-backend/portfolio_backend/application/ws
 ENV FLASK_ENV production
 
 COPY deploy/uwsgi.ini /home/portfolio/conf/uwsgi.ini
-RUN python/bin/flask db upgrade --directory portfolio-backend/portfolio_backend/application/migrations
+#RUN python/bin/flask db upgrade --directory
+#portfolio-backend/portfolio_backend/application/migrations
 
 CMD ["python/bin/uwsgi", "/home/portfolio/conf/uwsgi.ini"]
