@@ -9,11 +9,11 @@ class WebSiteInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(length=127), nullable=False)
     avatar_image_path = db.Column(db.String(length=1024), nullable=True)
-    role = db.Column(db.String(length=511), nullable=False)
-    role_description = db.Column(db.String(length=2047), nullable=False)
+    role_description = db.Column(db.Text, nullable=False)
     about_me = db.Column(db.Text, nullable=False)
     address = db.Column(db.String(length=127), nullable=False)
     website = db.Column(db.String(length=255), nullable=False)
+    email = db.Column(db.String(length=255), nullable=True)
 
     __table_name__ = "major_info"
 

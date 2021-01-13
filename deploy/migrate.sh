@@ -1,0 +1,1 @@
+docker-compose exec backend python/bin/flask db upgrade --directory portfolio-backend/portfolio_backend/application/migrations

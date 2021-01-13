@@ -26,12 +26,12 @@ class WebSiteInfoSchema(ma.SQLAlchemySchema):
         fields = (
             "id",
             "name",
-            "role",
             "role_description",
             "about_me",
             "address",
             "website",
             "avatar_image",
+            "email"
         )
 
 
