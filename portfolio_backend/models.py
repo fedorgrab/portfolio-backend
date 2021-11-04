@@ -31,17 +31,15 @@ class PortfolioLink(db.Model):
 
 class PortfolioProject(OrderableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # Header info:
     image_path = db.Column(db.String(length=1024), nullable=False)
     image_source_link_inner = db.Column(db.String(length=1024), nullable=True)
     role = db.Column(db.String(length=255), nullable=True)
     year = db.Column(db.String(length=8), nullable=True)
     name = db.Column(db.String(length=127), nullable=False)
+    archived = db.Column(db.Boolean, nullable=True, default=True)
     short_description = db.Column(db.Text, default="description")
     description = db.Column(db.Text, nullable=False)
-    # Files:
     notebook_path = db.Column(db.String(length=1024), nullable=True)
-    # Links:
     links = db.relationship("PortfolioLink", back_populates="portfolio_project")
 
     __table_name__ = "portfolio_project"

@@ -16,9 +16,10 @@ def portfolio_info():
     website_info = website_info_schema.dump(obj=models.WebSiteInfo.query.first())
     portfolio_objects = portfolio_object_schema.dump(
         obj=(
-            models.PortfolioProject
-            .query.order_by(models.PortfolioProject.position)
-            .all()
+            models.PortfolioProject.query
+                .filter(models.PortfolioProject.archived == False)
+                .order_by(models.PortfolioProject.position)
+                .all()
         ),
         many=True
     )
@@ -26,15 +27,15 @@ def portfolio_info():
     education_items = education_section_item_schema.dump(
         obj=(
             models.EducationSectionItem
-            .query.order_by(models.EducationSectionItem.position)
-            .all()
+                .query.order_by(models.EducationSectionItem.position)
+                .all()
         ), many=True
     )
     job_items = job_section_item_schema.dump(
         obj=(
             models.JobSectionItem
-            .query.order_by(models.JobSectionItem.order_number)
-            .all()
+                .query.order_by(models.JobSectionItem.order_number)
+                .all()
         ), many=True
     )
     social_links = social_link_schema.dump(obj=models.SocialLink.query.all(), many=True)

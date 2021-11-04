@@ -60,9 +60,17 @@ class ProjectAdminView(OrderableModelView):
     form_overrides = {"description": CKTextAreaField}
     column_labels = {"image_path": "Image", "notebook_path": "Notebook"}
     extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
-    column_editable_list = ("position", "role", "year")
+    column_editable_list = ("position", "archived", "role", "year")
     column_formatters = {"image_path": display_image_list}
-    column_list = ("image_path", "position", "name", "role", "year", "short_description",)
+    column_list = (
+        "image_path",
+        "position",
+        "archived",
+        "name",
+        "role",
+        "year",
+        "short_description"
+    )
     inline_models = (models.PortfolioLink,)
 
     @staticmethod
