@@ -17,8 +17,8 @@ def portfolio_info():
     portfolio_objects = portfolio_object_schema.dump(
         obj=(
             models.PortfolioProject.query
-                .filter(models.PortfolioProject.archived == False)
                 .order_by(models.PortfolioProject.position)
+                .filter(models.PortfolioProject.archived.is_(False))
                 .all()
         ),
         many=True

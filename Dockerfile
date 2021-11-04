@@ -9,6 +9,7 @@ RUN apk add zlib-dev jpeg-dev gcc musl-dev python3-dev build-base linux-headers 
 RUN python/bin/pip install wheel
 RUN python/bin/pip install uwsgi
 RUN python/bin/pip install -r portfolio-backend/portfolio_backend/requirements.txt
+RUN python/bin/pip install 'SQLAlchemy<1.4.0'
 
 COPY portfolio_backend portfolio-backend/portfolio_backend
 COPY templates portfolio-backend/templates
